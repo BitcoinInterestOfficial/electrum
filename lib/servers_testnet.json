@@ -1,15 +1,15 @@
 {
-    "test-node1.bitcoingold.org": {
+    "": {
         "pruning": "-",
         "s": "50002",
         "version": "1.2"
     },
-    "test-node2.bitcoingold.org": {
+    "": {
         "pruning": "-",
         "s": "50002",
         "version": "1.2"
     },
-    "test-node3.bitcoingold.org": {
+    "": {
         "pruning": "-",
         "s": "50002",
         "version": "1.2"

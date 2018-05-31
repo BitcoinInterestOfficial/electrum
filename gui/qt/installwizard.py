@@ -98,7 +98,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
     def __init__(self, config, app, plugins, storage):
         BaseWizard.__init__(self, config, storage)
         QDialog.__init__(self, None)
-        self.setWindowTitle('ElectrumG -  ' + _('Install Wizard'))
+        self.setWindowTitle('Electrum-bci -  ' + _('Install Wizard'))
         self.app = app
         self.config = config
         # Set for base base class
@@ -143,7 +143,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         hbox.setStretchFactor(scroll, 1)
         outer_vbox.addLayout(hbox)
         outer_vbox.addLayout(Buttons(self.back_button, self.next_button))
-        self.set_icon(':icons/electrumg_small.png')
+        self.set_icon(':icons/electrum-bci_small.png')
         self.show()
         self.raise_()
         self.refresh_gui()  # Need for QT on MacOSX.  Lame.
@@ -170,7 +170,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         hbox2.addWidget(self.pw_e)
         hbox2.addStretch()
         vbox.addLayout(hbox2)
-        self.set_layout(vbox, title=_('ElectrumG wallet'))
+        self.set_layout(vbox, title=_('Electrum-bci wallet'))
 
         wallet_folder = os.path.dirname(self.storage.path)
 
@@ -540,7 +540,7 @@ class InstallWizard(QDialog, MessageBoxMixin, BaseWizard):
         return None
 
     def init_network(self, network):
-        message = _("ElectrumG communicates with remote servers to get "
+        message = _("Electrum-bci communicates with remote servers to get "
                   "information about your transactions and addresses. The "
                   "servers all fulfill the same purpose only differing in "
                   "hardware. In most cases you simply want to let Electrum "

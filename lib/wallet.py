@@ -190,7 +190,7 @@ class Abstract_Wallet(PrintError):
 
         self.gap_limit_for_change = 6 # constant
         # saved fields
-        self.use_change            = storage.get('use_change', True)
+        self.use_change            = storage.get('use_change', False)
         self.multiple_change       = storage.get('multiple_change', False)
         self.labels                = storage.get('labels', {})
         self.frozen_addresses      = set(storage.get('frozen_addresses',[]))
@@ -337,7 +337,7 @@ class Abstract_Wallet(PrintError):
         addrs = self.get_receiving_addresses()
         if len(addrs) > 0:
             if not bitcoin.is_address(addrs[0]):
-                raise WalletFileException('The addresses in this wallet are not BitcoinGold addresses.')
+                raise WalletFileException('The addresses in this wallet are not BitcoinInterest addresses.')
 
     def synchronize(self):
         pass
@@ -665,7 +665,7 @@ class Abstract_Wallet(PrintError):
         received, sent = self.get_addr_io(address)
         return sum([v for height, v, is_cb in received.values()])
 
-    # return the balance of a BitcoinGold address: confirmed and matured, unconfirmed, unmatured
+    # return the balance of a BitcoinInterest address: confirmed and matured, unconfirmed, unmatured
     def get_addr_balance(self, address):
         received, sent = self.get_addr_io(address)
         c = u = x = 0
@@ -1168,7 +1168,7 @@ class Abstract_Wallet(PrintError):
             _type, data, value = o
             if _type == TYPE_ADDRESS:
                 if not is_address(data):
-                    raise BaseException("Invalid BitcoinGold address: {}".format(data))
+                    raise BaseException("Invalid BitcoinInterest address: {}".format(data))
             if value == '!':
                 if i_max is not None:
                     raise BaseException("More than one output set to spend max")
@@ -1517,7 +1517,7 @@ class Abstract_Wallet(PrintError):
         if not r:
             return
         out = copy.copy(r)
-        out['URI'] = 'bitcoingold:' + addr + '?amount=' + format_satoshis(out.get('amount'))
+        out['URI'] = 'bitcoininterest:' + addr + '?amount=' + format_satoshis(out.get('amount'))
         status, conf = self.get_request_status(addr)
         out['status'] = status
         if conf is not None:

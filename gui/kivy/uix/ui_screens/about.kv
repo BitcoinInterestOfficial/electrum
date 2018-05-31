@@ -1,7 +1,7 @@
 #:import VERSION electrum.version.ELECTRUM_VERSION
 
 Popup:
-    title: _("About ElectrumG")
+    title: _("About Electrum-bci")
     BoxLayout:
         orientation: 'vertical'
         spacing: '10dp'
@@ -26,19 +26,19 @@ Popup:
                 size_hint_x: 0.4
             TopLabel:
                 markup: True
-                text: '[color=6666ff][ref=x]https://bitcoingold.org[/ref][/color]'
+                text: '[color=6666ff][ref=x]https://www.bitcoininterest.io[/ref][/color]'
                 on_ref_press:
                     import webbrowser
-                    webbrowser.open("https://bitcoingold.org")
+                    webbrowser.open("https://www.bitcoininterest.io")
                 size_hint_x: 0.6
             TopLabel:
                 text: _('Developers')
                 size_hint_x: 0.4
             TopLabel:
-                text: 'The BitcoiGold Developers'
+                text: 'The Bitcoin Interest Developers'
                 size_hint_x: 0.6
         TopLabel:
-            text: _('Distributed by BitcoinGold Organization')
+            text: _('Distributed by BitcoinInterest Organization')
             padding: '0dp', '20dp'
         Widget:
             size_hint: None, 0.5

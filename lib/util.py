@@ -40,7 +40,7 @@ def inv_dict(d):
     return {v: k for k, v in d.items()}
 
 
-base_units = {'BTG': 8, 'mBTG': 5, 'uBTG': 2}
+base_units = {'BCI': 8, 'mBCI': 5, 'uBCI': 2}
 
 def normalize_version(v):
     return [int(x) for x in re.sub(r'(\.0+)*$', '', v).split(".")]
@@ -106,7 +106,7 @@ class Satoshis(object):
         return 'Satoshis(%d)'%self.value
 
     def __str__(self):
-        return format_satoshis(self.value) + " BTG"
+        return format_satoshis(self.value) + " BCI"
 
 class Fiat(object):
     def __new__(cls, value, ccy):
@@ -305,7 +305,7 @@ def android_data_dir():
     return PythonActivity.mActivity.getFilesDir().getPath() + '/data'
 
 def android_headers_dir():
-    d = android_ext_dir() + '/org.electrumg.electrum'
+    d = android_ext_dir() + '/org.electrum-bci.electrum'
     if not os.path.exists(d):
         os.mkdir(d)
     return d
@@ -314,7 +314,7 @@ def android_check_data_dir():
     """ if needed, move old directory to sandbox """
     ext_dir = android_ext_dir()
     data_dir = android_data_dir()
-    old_electrum_dir = ext_dir + '/electrumg'
+    old_electrum_dir = ext_dir + '/electrum-bci'
     if not os.path.exists(data_dir) and os.path.exists(old_electrum_dir):
         import shutil
         new_headers_path = android_headers_dir() + '/blockchain_headers'
@@ -398,11 +398,11 @@ def user_dir():
     if 'ANDROID_DATA' in os.environ:
         return android_check_data_dir()
     elif os.name == 'posix':
-        return os.path.join(os.environ["HOME"], ".electrumg")
+        return os.path.join(os.environ["HOME"], ".electrum-bci")
     elif "APPDATA" in os.environ:
-        return os.path.join(os.environ["APPDATA"], "ElectrumG")
+        return os.path.join(os.environ["APPDATA"], "Electrum-bci")
     elif "LOCALAPPDATA" in os.environ:
-        return os.path.join(os.environ["LOCALAPPDATA"], "ElectrumG")
+        return os.path.join(os.environ["LOCALAPPDATA"], "Electrum-bci")
     else:
         #raise Exception("No home directory found in environment variables.")
         return
@@ -502,14 +502,14 @@ def time_difference(distance_in_time, include_seconds):
 
 # TODO: Add more mainnet block explorer
 mainnet_block_explorers = {
-    'BitcoinGold.org': ('https://explorer.bitcoingold.org/insight/',
+    'BitcoinInterest.org': ('https://explorer.bitcoininterest.io/',
                         {'tx': 'tx/', 'addr': 'address/'}),
     'system default': ('blockchain:/',
                         {'tx': 'tx/', 'addr': 'address/'}),
 }
 
 testnet_block_explorers = {
-    'BitcoinGold.org': ('https://test-explorer.bitcoingold.org/insight/',
+    'BitcoinInterest.org': ('https://explorer.bitcoininterest.io/',
                         {'tx': 'tx/', 'addr': 'address/'}),
     'system default': ('blockchain://000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943/',
                        {'tx': 'tx/', 'addr': 'address/'}),
@@ -520,7 +520,7 @@ def block_explorer_info():
     return testnet_block_explorers if constants.net.TESTNET else mainnet_block_explorers
 
 def block_explorer(config):
-    return config.get('block_explorer', 'BitcoinGold.org')
+    return config.get('block_explorer', 'BitcoinInterest.org')
 
 def block_explorer_tuple(config):
     return block_explorer_info().get(block_explorer(config))
@@ -545,12 +545,12 @@ def parse_URI(uri, on_pr=None):
 
     if ':' not in uri:
         if not bitcoin.is_address(uri):
-            raise BaseException("Not a BitcoinGold address")
+            raise BaseException("Not a BitcoinInterest address")
         return {'address': uri}
 
     u = urllib.parse.urlparse(uri)
-    if u.scheme != 'bitcoingold':
-        raise BaseException("Not a BitcoinGold URI")
+    if u.scheme != 'bitcoininterest':
+        raise BaseException("Not a BitcoinInterest URI")
     address = u.path
 
     # python for android fails to parse query
@@ -567,7 +567,7 @@ def parse_URI(uri, on_pr=None):
     out = {k: v[0] for k, v in pq.items()}
     if address:
         if not bitcoin.is_address(address):
-            raise BaseException("Invalid BitcoinGold address:" + address)
+            raise BaseException("Invalid BitcoinInterest address:" + address)
         out['address'] = address
     if 'amount' in out:
         am = out['amount']
@@ -617,7 +617,7 @@ def create_URI(addr, amount, message):
         query.append('amount=%s'%format_satoshis_plain(amount))
     if message:
         query.append('message=%s'%urllib.parse.quote(message))
-    p = urllib.parse.ParseResult(scheme='bitcoingold', netloc='', path=addr, params='', query='&'.join(query), fragment='')
+    p = urllib.parse.ParseResult(scheme='bitcoininterest', netloc='', path=addr, params='', query='&'.join(query), fragment='')
     return urllib.parse.urlunparse(p)
 
 

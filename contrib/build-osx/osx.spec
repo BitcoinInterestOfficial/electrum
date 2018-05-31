@@ -5,10 +5,10 @@ from PyInstaller.utils.hooks import collect_data_files, collect_submodules, coll
 import sys
 import os
 
-PACKAGE='ElectrumG'
-PYPKG='electrumg'
-MAIN_SCRIPT='electrumg'
-ICONS_FILE='electrumg.icns'
+PACKAGE='Electrum-bci'
+PYPKG='electrum-bci'
+MAIN_SCRIPT='electrum-bci'
+ICONS_FILE='electrum-bci.icns'
 
 for i, x in enumerate(sys.argv):
     if x == '--name':

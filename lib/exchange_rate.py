@@ -124,7 +124,7 @@ class Bitfinex(ExchangeBase):
 class Bitmarket(ExchangeBase):
 
     def get_rates(self, ccy):
-        json = self.get_json('www.bitmarket.pl', '/json/BTGPLN/ticker.json')
+        json = self.get_json('www.bitmarket.pl', '/json/BCIPLN/ticker.json')
         return {'PLN': Decimal(json['last'])}
 
 

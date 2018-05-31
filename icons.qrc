@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="/" >
-    <file>icons/electrumg.png</file>
-    <file>icons/electrumg_small.png</file>
+    <file>icons/electrum-bci.png</file>
+    <file>icons/electrum-bci_small.png</file>
     <file>icons/clock1.png</file>
     <file>icons/clock2.png</file>
     <file>icons/clock3.png</file>
@@ -12,8 +12,8 @@
     <file>icons/digitalbitbox.png</file>
     <file>icons/digitalbitbox_unpaired.png</file>
     <file>icons/expired.png</file>
-    <file>icons/electrumg_light_icon.png</file>
-    <file>icons/electrumg_dark_icon.png</file>
+    <file>icons/electrum-bci_light_icon.png</file>
+    <file>icons/electrum-bci_dark_icon.png</file>
     <file>icons/file.png</file>
     <file>icons/info.png</file>
     <file>icons/keepkey.png</file>

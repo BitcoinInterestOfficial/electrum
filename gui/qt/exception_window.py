@@ -46,7 +46,7 @@ issue_template = """<h2>Traceback</h2>
 
 <h2>Additional information</h2>
 <ul>
-  <li>ElectrumG version: {app_version}</li>
+  <li>Electrum-bci version: {app_version}</li>
   <li>Operating system: {os}</li>
   <li>Wallet type: {wallet_type}</li>
   <li>Locale: {locale}</li>
@@ -63,14 +63,14 @@ class Exception_Window(QWidget, MessageBoxMixin):
         self.exc_args = (exctype, value, tb)
         self.main_window = main_window
         QWidget.__init__(self)
-        self.setWindowTitle('ElectrumG - ' + _('An Error Occured'))
+        self.setWindowTitle('Electrum-bci - ' + _('An Error Occured'))
         self.setMinimumSize(600, 300)
 
         main_box = QVBoxLayout()
 
         heading = QLabel('<h2>' + _('Sorry!') + '</h2>')
         main_box.addWidget(heading)
-        main_box.addWidget(QLabel(_('Something went wrong while executing ElectrumG.')))
+        main_box.addWidget(QLabel(_('Something went wrong while executing Electrum-bci.')))
 
         main_box.addWidget(QLabel(_('Please create a bug report with the following content to help us diagnose and fix the problem:')))
 

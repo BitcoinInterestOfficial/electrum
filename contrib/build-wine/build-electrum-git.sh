@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME_ROOT=electrumg
+NAME_ROOT=electrum-bci
 PYTHON_VERSION=3.5.4
 
 # These settings probably don't need any change
@@ -26,7 +26,7 @@ for repo in electrum electrum-locale electrum-icons; do
 	git checkout master
 	cd ..
     else
-	URL=https://github.com/BTCGPU/$repo.git
+	URL=https://github.com/BitcoinInterestOfficial/$repo.git
 	git clone -b master $URL $repo
     fi
 done
@@ -49,18 +49,18 @@ echo "Last commit: $VERSION"
 find -exec touch -d '2000-11-11T11:11:11+00:00' {} +
 popd
 
-rm -rf $WINEPREFIX/drive_c/electrumg
-cp -r electrum $WINEPREFIX/drive_c/electrumg
+rm -rf $WINEPREFIX/drive_c/electrum-bci
+cp -r electrum $WINEPREFIX/drive_c/electrum-bci
 cp electrum/LICENCE .
-cp -r electrum-locale/locale $WINEPREFIX/drive_c/electrumg/lib/
-cp electrum-icons/icons_rc.py $WINEPREFIX/drive_c/electrumg/gui/qt/
+cp -r electrum-locale/locale $WINEPREFIX/drive_c/electrum-bci/lib/
+cp electrum-icons/icons_rc.py $WINEPREFIX/drive_c/electrum-bci/gui/qt/
 
 # Install frozen dependencies
 $PYTHON -m pip install -r ../../deterministic-build/requirements.txt
 
 $PYTHON -m pip install -r ../../deterministic-build/requirements-hw.txt
 
-pushd $WINEPREFIX/drive_c/electrumg
+pushd $WINEPREFIX/drive_c/electrum-bci
 $PYTHON setup.py install
 popd
 
@@ -81,7 +81,7 @@ popd
 wine "$WINEPREFIX/drive_c/Program Files (x86)/NSIS/makensis.exe" /DPRODUCT_VERSION=$VERSION electrum.nsi
 
 cd dist
-mv electrumg-setup.exe $NAME_ROOT-$VERSION-setup.exe
+mv electrum-bci-setup.exe $NAME_ROOT-$VERSION-setup.exe
 cd ..
 
 echo "Done."

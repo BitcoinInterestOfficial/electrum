@@ -18,7 +18,7 @@ with open('contrib/requirements/requirements-hw.txt') as f:
 version = imp.load_source('version', 'lib/version.py')
 
 if sys.version_info[:3] < (3, 4, 0):
-    sys.exit("Error: ElectrumG requires Python version >= 3.4.0...")
+    sys.exit("Error: Electrum-bci requires Python version >= 3.4.0...")
 
 data_files = []
 
@@ -34,12 +34,12 @@ if platform.system() in ['Linux', 'FreeBSD', 'DragonFly']:
         else:
             usr_share = os.path.expanduser('~/.local/share')
     data_files += [
-        (os.path.join(usr_share, 'applications/'), ['electrumg.desktop']),
-        (os.path.join(usr_share, 'pixmaps/'), ['icons/electrumg.png'])
+        (os.path.join(usr_share, 'applications/'), ['electrum-bci.desktop']),
+        (os.path.join(usr_share, 'pixmaps/'), ['icons/electrum-bci.png'])
     ]
 
 setup(
-    name="ElectrumG",
+    name="Electrum-bci",
     version=version.ELECTRUM_VERSION,
     install_requires=requirements,
     packages=[
@@ -71,14 +71,14 @@ setup(
             'locale/*/LC_MESSAGES/electrum.mo',
         ]
     },
-    scripts=['electrumg'],
+    scripts=['electrum-bci'],
     data_files=data_files,
-    description="Lightweight BitcoinGold Wallet",
-    author="The BitcoinGold Developers",
-    author_email="support@bitcoingold.org",
+    description="Lightweight Bitcoin Interest Wallet",
+    author="The Bitcoin Interest Developers",
+    author_email="admin@bitcoininterest.io",
     license="MIT Licence",
-    url="https://bitcoingold.org",
-    long_description="""Lightweight BitcoinGold Wallet"""
+    url="https://www.bitcoininterest.io/",
+    long_description="""Lightweight Bitcoin Interest Wallet"""
 )
 
 # Optional modules (not required to run Electrum)

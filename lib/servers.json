@@ -1,10 +1,10 @@
 {
-    "electrumx-eu.bitcoingold.org": {
+    "wallet.bitcoininterest.io": {
         "pruning": "-",
         "s": "50002",
         "version": "1.2"
     },
-    "electrumx-us.bitcoingold.org": {
+    "wallet.bitcoininterest.io": {
         "pruning": "-",
         "s": "50002",
         "version": "1.2"

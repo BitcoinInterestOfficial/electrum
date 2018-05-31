@@ -7,6 +7,7 @@ dist/
 /electrum.py
 contrib/pyinstaller/
 Electrum.egg-info/
+Electrum_bci.egg-info/
 gui/qt/icons_rc.py
 locale/
 .devlocaltmp/
@@ -24,3 +25,5 @@ bin/
 /venv/**
 /.idea/**
 /example.log
+electrum-bci-env
+contrib/*/tmp/

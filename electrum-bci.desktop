@@ -1,0 +1,17 @@
+# If you want electrum to appear in a linux app launcher ("start menu"), install this by doing:
+# sudo desktop-file-install electrum-bci.desktop
+
+[Desktop Entry]
+Comment=Lightweight BitcoinInterest Client
+Exec=electrum-bci %u
+GenericName[en_US]=BitcoinInterest Wallet
+GenericName=BitcoinIntrest Wallet
+Icon=electrum-bci
+Name[en_US]=Electrum BitcoinInterest Wallet
+Name=Electrum BitcoinInterest Wallet
+Categories=Finance;Network;
+StartupNotify=false
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/bitcoininterest;
+

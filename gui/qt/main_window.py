@@ -53,7 +53,7 @@ from electrum import util, bitcoin, commands, coinchooser
 from electrum import paymentrequest
 from electrum.wallet import Multisig_Wallet, AddTransactionException
 
-from .amountedit import AmountEdit, BTGAmountEdit, MyLineEdit, FeerateEdit
+from .amountedit import AmountEdit, BCIAmountEdit, MyLineEdit, FeerateEdit
 from .qrcodewidget import QRCodeWidget, QRDialog
 from .qrtextedit import ShowQRTextEdit, ScanQRTextEdit
 from .transaction_dialog import show_transaction
@@ -160,7 +160,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         if self.config.get("is_maximized"):
             self.showMaximized()
 
-        self.setWindowIcon(QIcon(":icons/electrumg.png"))
+        self.setWindowIcon(QIcon(":icons/electrum-bci.png"))
         self.init_menubar()
 
         wrtabs = weakref.proxy(tabs)
@@ -189,7 +189,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             # partials, lambdas or methods of subobjects.  Hence...
             self.network.register_callback(self.on_network, interests)
             # set initial message
-            self.console.showMessage(_('Welcome to ElectrumG!'))
+            self.console.showMessage(_('Welcome to Electrum-bci!'))
             self.network.register_callback(self.on_quotes, ['on_quotes'])
             self.network.register_callback(self.on_history, ['on_history'])
             self.new_fx_quotes_signal.connect(self.on_fx_quotes)
@@ -373,7 +373,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.setGeometry(100, 100, 840, 400)
 
     def watching_only_changed(self):
-        name = "ElectrumG Testnet" if constants.net.TESTNET else "ElectrumG"
+        name = "Electrum-bci Testnet" if constants.net.TESTNET else "Electrum-bci"
         title = '%s %s  -  %s' % (name, self.wallet.electrum_version,
                                         self.wallet.basename())
         extra = [self.wallet.storage.get('wallet_type', '?')]
@@ -391,8 +391,8 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         if self.wallet.is_watching_only():
             msg = ' '.join([
                 _("This wallet is watching-only."),
-                _("This means you will not be able to spend BitcoinGold with it."),
-                _("Make sure you own the seed phrase or the private keys, before you request BitcoinGold to be sent to this wallet.")
+                _("This means you will not be able to spend BitcoinInterest with it."),
+                _("Make sure you own the seed phrase or the private keys, before you request BitcoinInterest to be sent to this wallet.")
             ])
             self.show_warning(msg, title=_('Information'))
 
@@ -416,7 +416,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                 shutil.copy2(path, new_path)
                 self.show_message(_("A copy of your wallet file was created in")+" '%s'" % str(new_path), title=_("Wallet backup created"))
             except BaseException as reason:
-                self.show_critical(_("ElectrumG was unable to copy your wallet file to the specified location.") + "\n" + str(reason), title=_("Unable to create backup"))
+                self.show_critical(_("Electrum-bci was unable to copy your wallet file to the specified location.") + "\n" + str(reason), title=_("Unable to create backup"))
 
     def update_recently_visited(self, filename):
         recent = self.config.get('recently_open', [])
@@ -511,7 +511,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         tools_menu = menubar.addMenu(_("&Tools"))
 
         # Settings / Preferences are all reserved keywords in OSX using this as work around
-        tools_menu.addAction(_("ElectrumG preferences") if sys.platform == 'darwin' else _("Preferences"), self.settings_dialog)
+        tools_menu.addAction(_("Electrum-bci preferences") if sys.platform == 'darwin' else _("Preferences"), self.settings_dialog)
         tools_menu.addAction(_("&Network"), lambda: self.gui_object.show_network_dialog(self))
         #tools_menu.addAction(_("&Plugins"), self.plugins_dialog)
         tools_menu.addSeparator()
@@ -531,7 +531,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         help_menu = menubar.addMenu(_("&Help"))
         help_menu.addAction(_("&About"), self.show_about)
-        help_menu.addAction(_("&Official website"), lambda: webbrowser.open("http://bitcoingold.org"))
+        help_menu.addAction(_("&Official website"), lambda: webbrowser.open("https://www.bitcoininterest.io"))
         help_menu.addSeparator()
         help_menu.addAction(_("&Documentation"), lambda: webbrowser.open("http://docs.electrum.org/")).setShortcut(QKeySequence.HelpContents)
         help_menu.addAction(_("&Report Bug"), self.show_report_bug)
@@ -544,24 +544,24 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         d = self.network.get_donation_address()
         if d:
             host = self.network.get_parameters()[0]
-            self.pay_to_URI('bitcoingold:%s?message=donation for %s'%(d, host))
+            self.pay_to_URI('bitcoininterest:%s?message=donation for %s'%(d, host))
         else:
             self.show_error(_('No donation address for this server'))
 
     def show_about(self):
-        QMessageBox.about(self, "ElectrumG",
+        QMessageBox.about(self, "Electrum-bci",
             _("Version")+" %s" % (self.wallet.electrum_version) + "\n\n" +
-                _("ElectrumG's focus is speed, with low resource usage and simplifying BitcoinGold. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the BitcoinGold system."  + "\n\n" +
+                _("Electrum-bci's focus is speed, with low resource usage and simplifying BitcoinInterest. You do not need to perform regular backups, because your wallet can be recovered from a secret phrase that you can memorize or write on paper. Startup times are instant because it operates in conjunction with high-performance servers that handle the most complicated parts of the BitcoinInterest system."  + "\n\n" +
                 _("Uses icons from the Icons8 icon pack (icons8.com).")))
 
     def show_report_bug(self):
         msg = ' '.join([
             _("Please report any bugs as issues on github:<br/>"),
             "<a href=\"{0}\">{0}</a><br/><br/>".format(constants.GIT_ISSUE_URL),
-            _("Before reporting a bug, upgrade to the most recent version of ElectrumG (latest release or git HEAD), and include the version number in your report."),
+            _("Before reporting a bug, upgrade to the most recent version of Electrum-bci (latest release or git HEAD), and include the version number in your report."),
             _("Try to explain not only what the bug is, but how it occurs.")
          ])
-        self.show_message(msg, title="ElectrumG - " + _("Reporting Bugs"))
+        self.show_message(msg, title="Electrum-bci - " + _("Reporting Bugs"))
 
     def notify_transactions(self):
         if not self.network or not self.network.is_connected():
@@ -591,9 +591,9 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         if self.tray:
             try:
                 # this requires Qt 5.9
-                self.tray.showMessage("ElectrumG", message, QIcon(":icons/electrumg_dark_icon"), 20000)
+                self.tray.showMessage("Electrum-bci", message, QIcon(":icons/electrum-bci_dark_icon"), 20000)
             except TypeError:
-                self.tray.showMessage("ElectrumG", message, QSystemTrayIcon.Information, 20000)
+                self.tray.showMessage("Electrum-bci", message, QSystemTrayIcon.Information, 20000)
 
 
 
@@ -650,9 +650,9 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         if self.decimal_point == 2:
             return 'bits'
         if self.decimal_point == 5:
-            return 'mBTG'
+            return 'mBCI'
         if self.decimal_point == 8:
-            return 'BTG'
+            return 'BCI'
         raise Exception('Unknown base unit')
 
     def connect_fields(self, window, btc_e, fiat_e, fee_e):
@@ -779,7 +779,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.receive_address_e = ButtonsLineEdit()
         self.receive_address_e.addCopyButton(self.app)
         self.receive_address_e.setReadOnly(True)
-        msg = _('BitcoinGold address where the payment should be received. Note that each payment request uses a different BitcoinGold address.')
+        msg = _('BitcoinInterest address where the payment should be received. Note that each payment request uses a different BitcoinInterest address.')
         self.receive_address_label = HelpLabel(_('Receiving address'), msg)
         self.receive_address_e.textChanged.connect(self.update_receive_qr)
         self.receive_address_e.setFocusPolicy(Qt.NoFocus)
@@ -791,7 +791,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         grid.addWidget(self.receive_message_e, 1, 1, 1, -1)
         self.receive_message_e.textChanged.connect(self.update_receive_qr)
 
-        self.receive_amount_e = BTGAmountEdit(self.get_decimal_point)
+        self.receive_amount_e = BCIAmountEdit(self.get_decimal_point)
         grid.addWidget(QLabel(_('Requested amount')), 2, 0)
         grid.addWidget(self.receive_amount_e, 2, 1)
         self.receive_amount_e.textChanged.connect(self.update_receive_qr)
@@ -809,8 +809,8 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         msg = ' '.join([
             _('Expiration date of your request.'),
             _('This information is seen by the recipient if you send them a signed payment request.'),
-            _('Expired requests have to be deleted manually from your list, in order to free the corresponding BitcoinGold addresses.'),
-            _('The BitcoinGold address never expires and will always be part of this ElectrumG wallet.'),
+            _('Expired requests have to be deleted manually from your list, in order to free the corresponding BitcoinInterest addresses.'),
+            _('The BitcoinInterest address never expires and will always be part of this Electrum-bci wallet.'),
         ])
         grid.addWidget(HelpLabel(_('Request expires'), msg), 3, 0)
         grid.addWidget(self.expires_combo, 3, 1)
@@ -1033,10 +1033,10 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         grid.setColumnStretch(3, 1)
 
         from .paytoedit import PayToEdit
-        self.amount_e = BTGAmountEdit(self.get_decimal_point)
+        self.amount_e = BCIAmountEdit(self.get_decimal_point)
         self.payto_e = PayToEdit(self)
         msg = _('Recipient of the funds.') + '\n\n'\
-              + _('You may enter a BitcoinGold address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a BitcoinGold address)')
+              + _('You may enter a BitcoinInterest address, a label from your list of contacts (a list of completions will be proposed), or an alias (email-like address that forwards to a BitcoinInterest address)')
         payto_label = HelpLabel(_('Pay to'), msg)
         grid.addWidget(payto_label, 1, 0)
         grid.addWidget(self.payto_e, 1, 1, 1, -1)
@@ -1083,7 +1083,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         hbox.addStretch(1)
         grid.addLayout(hbox, 4, 4)
 
-        msg = _('BitcoinGold transactions are in general not free. A transaction fee is paid by the sender of the funds.') + '\n\n'\
+        msg = _('BitcoinInterest transactions are in general not free. A transaction fee is paid by the sender of the funds.') + '\n\n'\
               + _('The amount of fee can be decided freely by the sender. However, transactions with low fees take more time to be processed.') + '\n\n'\
               + _('A suggested fee is automatically added to this field. You may override it. The suggested fee increases with the size of the transaction.')
         self.fee_e_label = HelpLabel(_('Fee'), msg)
@@ -1138,13 +1138,13 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.feerate_e.textEdited.connect(partial(on_fee_or_feerate, self.feerate_e, False))
         self.feerate_e.editingFinished.connect(partial(on_fee_or_feerate, self.feerate_e, True))
 
-        self.fee_e = BTGAmountEdit(self.get_decimal_point)
+        self.fee_e = BCIAmountEdit(self.get_decimal_point)
         self.fee_e.textEdited.connect(partial(on_fee_or_feerate, self.fee_e, False))
         self.fee_e.editingFinished.connect(partial(on_fee_or_feerate, self.fee_e, True))
 
         def feerounding_onclick():
             text = (self.feerounding_text + '\n\n' +
-                    _('To somewhat protect your privacy, ElectrumG tries to create change with similar precision to other outputs.') + ' ' +
+                    _('To somewhat protect your privacy, Electrum-bci tries to create change with similar precision to other outputs.') + ' ' +
                     _('At most 100 satoshis might be lost due to this rounding.') + ' ' +
                     _("You can disable this setting in '{}'.").format(_('Preferences')) + '\n' +
                     _('Also, dust is not kept as change, but added to the fee.'))
@@ -1467,10 +1467,10 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         for _type, addr, amount in outputs:
             if addr is None:
-                self.show_error(_('BitcoinGold Address is None'))
+                self.show_error(_('BitcoinInterest Address is None'))
                 return
             if _type == TYPE_ADDRESS and not bitcoin.is_address(addr):
-                self.show_error(_('Invalid BitcoinGold Address'))
+                self.show_error(_('Invalid BitcoinInterest Address'))
                 return
             if amount is None:
                 self.show_error(_('Invalid Amount'))
@@ -1690,7 +1690,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         try:
             out = util.parse_URI(URI, self.on_pr)
         except BaseException as e:
-            self.show_error(_('Invalid bitcoingold URI:') + '\n' + str(e))
+            self.show_error(_('Invalid bitcoininterest URI:') + '\n' + str(e))
             return
         self.show_send_tab()
         r = out.get('r')
@@ -1896,7 +1896,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                                  'network' : self.network,
                                  #'plugins' : self.gui_object.plugins,
                                  'window': self})
-        console.updateNamespace({'util' : util, 'bitcoingold':bitcoin})
+        console.updateNamespace({'util' : util, 'bitcoininterest':bitcoin})
 
         c = commands.Commands(self.config, self.wallet, self.network, lambda: self.console.set_json(True))
         methods = {}
@@ -2063,12 +2063,12 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                 _('Delete wallet file?'),
                 "%s" % self.wallet.storage.path,
                 _('If your wallet contains funds, make sure you have saved its seed.')]),
-                title='ElectrumG', icon=QMessageBox.Warning):
+                title='Electrum-bci', icon=QMessageBox.Warning):
             if self.question('\n'.join([
                 _('Are you sure you want to delete this wallet file?'),
                 "%s" % self.wallet.storage.path, '\n',
                 _("This CANNOT be undone!")]),
-                    title='ElectrumG', icon=QMessageBox.Warning):
+                    title='Electrum-bci', icon=QMessageBox.Warning):
                 self._delete_wallet()
 
     @protected
@@ -2135,14 +2135,14 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                 "private key, and verifying with the corresponding public key. The "
                 "address you have entered does not have a unique public key, so these "
                 "operations cannot be performed.") + '\n\n' + \
-               _('The operation is undefined. Not just in ElectrumG, but in general.')
+               _('The operation is undefined. Not just in Electrum-bci, but in general.')
 
     @protected
     def do_sign(self, address, message, signature, password):
         address  = address.text().strip()
         message = message.toPlainText().strip()
         if not bitcoin.is_address(address):
-            self.show_message(_('Invalid BitcoinGold address.'))
+            self.show_message(_('Invalid BitcoinInterest address.'))
             return
         if self.wallet.is_watching_only():
             self.show_message(_('This is a watching-only wallet.'))
@@ -2170,7 +2170,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         address  = address.text().strip()
         message = message.toPlainText().strip().encode('utf-8')
         if not bitcoin.is_address(address):
-            self.show_message(_('Invalid BitcoinGold address.'))
+            self.show_message(_('Invalid BitcoinInterest address.'))
             return
         try:
             # This can throw on invalid base64
@@ -2298,7 +2298,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             tx = tx_from_str(txt)
             return Transaction(tx)
         except BaseException as e:
-            self.show_critical(_("ElectrumG was unable to parse your transaction") + ":\n" + str(e))
+            self.show_critical(_("Electrum-bci was unable to parse your transaction") + ":\n" + str(e))
             return
 
     def read_tx_from_qrcode(self):
@@ -2310,8 +2310,8 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             return
         if not data:
             return
-        # if the user scanned a bitcoingold URI
-        if str(data).startswith("bitcoingold:"):
+        # if the user scanned a bitcoininterest URI
+        if str(data).startswith("bitcoininterest:"):
             self.pay_to_URI(data)
             return
         # else if the user scanned an offline signed tx
@@ -2333,7 +2333,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             with open(fileName, "r") as f:
                 file_content = f.read()
         except (ValueError, IOError, os.error) as reason:
-            self.show_critical(_("ElectrumG was unable to open your transaction file") + "\n" + str(reason), title=_("Unable to read file or no transaction found"))
+            self.show_critical(_("Electrum-bci was unable to open your transaction file") + "\n" + str(reason), title=_("Unable to read file or no transaction found"))
             return
         return self.tx_from_text(file_content)
 
@@ -2386,7 +2386,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         e.setReadOnly(True)
         vbox.addWidget(e)
 
-        defaultname = 'electrumg-private-keys.csv'
+        defaultname = 'electrum-bci-private-keys.csv'
         select_msg = _('Select file to export your private keys to')
         hbox, filename_e, csv_button = filename_field(self, self.config, defaultname, select_msg)
         vbox.addLayout(hbox)
@@ -2444,7 +2444,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
             self.do_export_privkeys(filename, private_keys, csv_button.isChecked())
         except (IOError, os.error) as reason:
             txt = "\n".join([
-                _("ElectrumG was unable to produce a private key-export."),
+                _("Electrum-bci was unable to produce a private key-export."),
                 str(reason)
             ])
             self.show_critical(txt, title=_("Unable to create csv"))
@@ -2706,9 +2706,9 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         SSL_id_e.setReadOnly(True)
         id_widgets.append((SSL_id_label, SSL_id_e))
 
-        units = ['BTG', 'mBTG', 'bits']
+        units = ['BCI', 'mBCI', 'bits']
         msg = _('Base unit of your wallet.')\
-              + '\n1BTG=1000mBTG.\n' \
+              + '\n1BCI=1000mBCI.\n' \
               + _(' These settings affects the fields in the Send tab')+' '
         unit_label = HelpLabel(_('Base unit') + ':', msg)
         unit_combo = QComboBox()
@@ -2720,9 +2720,9 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
                 return
             edits = self.amount_e, self.fee_e, self.receive_amount_e
             amounts = [edit.get_amount() for edit in edits]
-            if unit_result == 'BTG':
+            if unit_result == 'BCI':
                 self.decimal_point = 8
-            elif unit_result == 'mBTG':
+            elif unit_result == 'mBCI':
                 self.decimal_point = 5
             elif unit_result == 'bits':
                 self.decimal_point = 2
@@ -2970,7 +2970,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
 
         run_hook('close_settings_dialog')
         if self.need_restart:
-            self.show_warning(_('Please restart ElectrumG to activate the new GUI settings'), title=_('Success'))
+            self.show_warning(_('Please restart Electrum-bci to activate the new GUI settings'), title=_('Success'))
 
     def closeEvent(self, event):
         if self.is_hidden() or not self.minimize_to_tray:
@@ -3006,7 +3006,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         self.gui_object.close_window(self)
 
     def plugins_dialog(self):
-        self.pluginsdialog = d = WindowModalDialog(self, _('ElectrumG Plugins'))
+        self.pluginsdialog = d = WindowModalDialog(self, _('Electrum-bci Plugins'))
 
         plugins = self.gui_object.plugins
 
@@ -3093,7 +3093,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         output_amount = QLabel('')
         grid.addWidget(QLabel(_('Output amount') + ':'), 2, 0)
         grid.addWidget(output_amount, 2, 1)
-        fee_e = BTGAmountEdit(self.get_decimal_point)
+        fee_e = BCIAmountEdit(self.get_decimal_point)
         # FIXME with dyn fees, without estimates, there are all kinds of crashes here
         def f(x):
             a = max_fee - fee_e.get_amount()
@@ -3131,7 +3131,7 @@ class ElectrumWindow(QMainWindow, MessageBoxMixin, PrintError):
         vbox.addWidget(QLabel(_('Current fee') + ': %s'% self.format_amount(fee) + ' ' + self.base_unit()))
         vbox.addWidget(QLabel(_('New fee' + ':')))
 
-        fee_e = BTGAmountEdit(self.get_decimal_point)
+        fee_e = BCIAmountEdit(self.get_decimal_point)
         fee_e.setAmount(fee * 1.5)
         vbox.addWidget(fee_e)
 

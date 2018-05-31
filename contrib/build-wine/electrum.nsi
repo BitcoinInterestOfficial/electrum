@@ -6,9 +6,9 @@
 ;--------------------------------
 ;Variables
 
-  !define PRODUCT_NAME "ElectrumG"
-  !define PRODUCT_WEB_SITE "https://github.com/BTCGPU/electrum"
-  !define PRODUCT_PUBLISHER "BitcoinGold Organization"
+  !define PRODUCT_NAME "Electrum-bci"
+  !define PRODUCT_WEB_SITE "https://github.com/BitcoinInterestOfficial/electrum"
+  !define PRODUCT_PUBLISHER "BitcoinInterest Organization"
   !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 
 ;--------------------------------
@@ -16,7 +16,7 @@
 
   ;Name and file
   Name "${PRODUCT_NAME}"
-  OutFile "dist/electrumg-setup.exe"
+  OutFile "dist/electrum-bci-setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\${PRODUCT_NAME}"
@@ -72,7 +72,7 @@
   !define MUI_ABORTWARNING
   !define MUI_ABORTWARNING_TEXT "Are you sure you wish to abort the installation of ${PRODUCT_NAME}?"
   
-  !define MUI_ICON "tmp\electrum\icons\electrumg.ico"
+  !define MUI_ICON "tmp\electrum\icons\electrum-bci.ico"
   
 ;--------------------------------
 ;Pages
@@ -125,7 +125,7 @@ Function .onInit
 FunctionEnd
 
 Function RunApplication
-  ExecShell "" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe"
+  ExecShell "" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe"
 FunctionEnd
 
 Section
@@ -138,8 +138,8 @@ Section
   Delete "$SMSTARTUP\${PRODUCT_NAME}.lnk"
 
   ;Files to pack into the installer
-  File /r "dist\electrumg\*.*"
-  File "..\..\icons\electrumg.ico"
+  File /r "dist\electrum-bci\*.*"
+  File "..\..\icons\electrum-bci.ico"
 
   ;Store installation folder
   WriteRegStr HKCU "Software\${PRODUCT_NAME}" "" $INSTDIR
@@ -150,20 +150,20 @@ Section
 
   ;Create desktop shortcut
   DetailPrint "Creating desktop shortcut..."
-  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe" ""
+  CreateShortCut "$DESKTOP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe" ""
 
   ;Create start-menu items
   DetailPrint "Creating start-menu items..."
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe" "" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe" 0
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe" 0
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe" "" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe" 0
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME}\${PRODUCT_NAME} Testnet.lnk" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe" "--testnet" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe" 0
 
-  ;Links bitcoingold: URI's to ElectrumG
-  WriteRegStr HKCU "Software\Classes\bitcoingold" "" "URL:bitcoingold Protocol"
-  WriteRegStr HKCU "Software\Classes\bitcoingold" "URL Protocol" ""
-  WriteRegStr HKCU "Software\Classes\bitcoingold" "DefaultIcon" "$\"$INSTDIR\electrumg.ico, 0$\""
-  WriteRegStr HKCU "Software\Classes\bitcoingold\shell\open\command" "" "$\"$INSTDIR\electrumg-${PRODUCT_VERSION}.exe$\" $\"%1$\""
+  ;Links bitcoininterest: URI's to Electrum-bci
+  WriteRegStr HKCU "Software\Classes\bitcoininterest" "" "URL:bitcoininterest Protocol"
+  WriteRegStr HKCU "Software\Classes\bitcoininterest" "URL Protocol" ""
+  WriteRegStr HKCU "Software\Classes\bitcoininterest" "DefaultIcon" "$\"$INSTDIR\electrum-bci.ico, 0$\""
+  WriteRegStr HKCU "Software\Classes\bitcoininterest\shell\open\command" "" "$\"$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe$\" $\"%1$\""
 
   ;Adds an uninstaller possibilty to Windows Uninstall or change a program section
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
@@ -171,7 +171,7 @@ Section
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
-  WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\electrumg.ico"
+  WriteRegStr HKCU "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\electrum-bci.ico"
 
   ;Fixes Windows broken size estimates
   ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
@@ -179,7 +179,7 @@ Section
   WriteRegDWORD HKCU "${PRODUCT_UNINST_KEY}" "EstimatedSize" "$0"
 
   ${If} ${SectionIsSelected} ${SecStartup}
-    CreateShortCut "$SMSTARTUP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrumg-${PRODUCT_VERSION}.exe" ""
+    CreateShortCut "$SMSTARTUP\${PRODUCT_NAME}.lnk" "$INSTDIR\electrum-bci-${PRODUCT_VERSION}.exe" ""
   ${EndIf}
 SectionEnd
 
@@ -199,7 +199,7 @@ Section "Uninstall"
   Delete "$SMSTARTUP\${PRODUCT_NAME}.lnk"
   RMDir  "$SMPROGRAMS\${PRODUCT_NAME}"
   
-  DeleteRegKey HKCU "Software\Classes\bitcoingold"
+  DeleteRegKey HKCU "Software\Classes\bitcoininterest"
   DeleteRegKey HKCU "Software\${PRODUCT_NAME}"
   DeleteRegKey HKCU "${PRODUCT_UNINST_KEY}"
 SectionEnd

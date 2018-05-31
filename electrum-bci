@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- mode: python -*-
 #
-# ElectrumG - lightweight BitcoinGold client
+# Electrum-bci - lightweight BitcoinInterest client
 # Copyright (C) 2011 thomasv@gitorious
 # Copyright (C) 2018 support@bitcoingold.org
+# Copyright (C) 2018 admin@bitcoininterest.io
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation files
@@ -44,7 +45,7 @@ if jnius:
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 is_bundle = getattr(sys, 'frozen', False)
-is_local = not is_bundle and os.path.exists(os.path.join(script_dir, "electrumg.desktop"))
+is_local = not is_bundle and os.path.exists(os.path.join(script_dir, "electrum-bci.desktop"))
 is_android = 'ANDROID_DATA' in os.environ
 
 # move this back to gui/kivy/__init.py once plugins are moved
@@ -194,7 +195,7 @@ def init_daemon(config_options):
     storage = WalletStorage(config.get_wallet_path())
     if not storage.file_exists():
         print_msg("Error: Wallet file not found.")
-        print_msg("Type 'electrumg create' to create a new wallet, or provide a path to a wallet with the -w option")
+        print_msg("Type 'electrum-bci create' to create a new wallet, or provide a path to a wallet with the -w option")
         sys.exit(0)
     if storage.is_encrypted():
         if storage.is_encrypted_with_hw_device():
@@ -232,7 +233,7 @@ def init_cmdline(config_options, server):
 
     if cmd.requires_wallet and not storage.file_exists():
         print_msg("Error: Wallet file not found.")
-        print_msg("Type 'electrumg create' to create a new wallet, or provide a path to a wallet with the -w option")
+        print_msg("Type 'electrum-bci create' to create a new wallet, or provide a path to a wallet with the -w option")
         sys.exit(0)
 
     # important warning
@@ -398,7 +399,7 @@ if __name__ == '__main__':
         config_options['portable'] = True
 
     if config_options.get('portable'):
-        config_options['electrumg_path'] = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'electrumg_data')
+        config_options['electrum-bci_path'] = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'electrum-bci_data')
 
     # kivy sometimes freezes when we write to sys.stderr
     set_verbosity(config_options.get('verbose') and config_options.get('gui')!='kivy')
@@ -406,7 +407,7 @@ if __name__ == '__main__':
     # check uri
     uri = config_options.get('url')
     if uri:
-        if not uri.startswith('bitcoingold:'):
+        if not uri.startswith('bitcoininterest:'):
             print_stderr('unknown command:', uri)
             sys.exit(1)
         config_options['url'] = uri

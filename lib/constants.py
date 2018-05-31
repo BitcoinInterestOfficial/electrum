@@ -27,7 +27,7 @@ import os
 import json
 from sys import maxsize
 
-GIT_REPO_URL = "https://github.com/BTCGPU/electrum"
+GIT_REPO_URL = "https://github.com/BitcoinInterestOfficial/electrum"
 GIT_ISSUE_URL = GIT_REPO_URL + "/issues"
 
 
@@ -41,7 +41,7 @@ def read_json(filename, default):
     return r
 
 
-class BitcoinGoldBase(object):
+class BitcoinInterestBase(object):
     TESTNET = False
     REGTEST = False
 
@@ -68,19 +68,19 @@ class BitcoinGoldBase(object):
     CHUNK_SIZE = 252
 
 
-class BitcoinGoldMainnet(BitcoinGoldBase):
+class BitcoinInterestMainnet(BitcoinInterestBase):
     WIF_PREFIX = 0x80
-    ADDRTYPE_P2PKH = 38
+    ADDRTYPE_P2PKH = 102
     ADDRTYPE_P2SH = 23
-    SEGWIT_HRP = "btg"
+    SEGWIT_HRP = "bci"
 
-    HEADERS_URL = "https://headers.bitcoingold.org/blockchain_headers"
+    HEADERS_URL = ""
     GENESIS = "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"
 
     DEFAULT_SERVERS = read_json('servers.json', {})
     CHECKPOINTS = read_json('checkpoints.json', [])
 
-    BTG_HEIGHT = 491407
+    BCI_HEIGHT = 505083
     LWMA_HEIGHT = maxsize
     PREMINE_SIZE = 8000
 
@@ -105,21 +105,21 @@ class BitcoinGoldMainnet(BitcoinGoldBase):
     }
 
 
-class BitcoinGoldTestnet(BitcoinGoldBase):
+class BitcoinInterestTestnet(BitcoinInterestBase):
     TESTNET = True
 
     WIF_PREFIX = 0xef
     ADDRTYPE_P2PKH = 111
     ADDRTYPE_P2SH = 196
-    SEGWIT_HRP = "tbtg"
+    SEGWIT_HRP = "tbci"
 
-    HEADERS_URL = "https://headers.bitcoingold.org/testnet_headers"
+    HEADERS_URL = ""
     GENESIS = "00000000e0781ebe24b91eedc293adfea2f557b53ec379e78959de3853e6f9f6"
 
     DEFAULT_PORTS = {'t': '51001', 's': '51002'}
     DEFAULT_SERVERS = read_json('servers_testnet.json', {})
 
-    BTG_HEIGHT = 1
+    BCI_HEIGHT = 1
     LWMA_HEIGHT = -1
     PREMINE_SIZE = 50
 
@@ -144,7 +144,7 @@ class BitcoinGoldTestnet(BitcoinGoldBase):
     }
 
 
-class BitcoinGoldRegtest(BitcoinGoldBase):
+class BitcoinInterestRegtest(BitcoinInterestBase):
     REGTEST = True
 
     WIF_PREFIX = 0xef
@@ -157,7 +157,7 @@ class BitcoinGoldRegtest(BitcoinGoldBase):
 
     DEFAULT_SERVERS = read_json('servers_regtest.json', {})
 
-    BTG_HEIGHT = 2000
+    BCI_HEIGHT = 2000
     LWMA_HEIGHT = -1
     PREMINE_SIZE = 10
 
@@ -188,19 +188,19 @@ class BitcoinGoldRegtest(BitcoinGoldBase):
 
 
 # don't import net directly, import the module instead (so that net is singleton)
-net = BitcoinGoldMainnet
+net = BitcoinInterestMainnet
 
 
 def set_mainnet():
     global net
-    net = BitcoinGoldMainnet
+    net = BitcoinInterestMainnet
 
 
 def set_testnet():
     global net
-    net = BitcoinGoldTestnet
+    net = BitcoinInterestTestnet
 
 
 def set_regtest():
     global net
-    net = BitcoinGoldRegtest
+    net = BitcoinInterestRegtest

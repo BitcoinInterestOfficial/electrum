@@ -1,13 +1,13 @@
 [app]
 
 # (str) Title of your application
-title = ElectrumG
+title = Electrum-bci
 
 # (str) Package name
-package.name = ElectrumG
+package.name = Electrum-bci
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.electrumg
+package.domain = org.electrum-bci
 
 # (str) Source code where the main.py live
 source.dir = .
@@ -35,10 +35,10 @@ requirements = python3crystax==3.6, android, openssl, plyer, kivy==master
 
 # (str) Presplash of the application
 #presplash.filename = %(source.dir)s/gui/kivy/theming/splash.png
-presplash.filename = %(source.dir)s/icons/electrumg_presplash.png
+presplash.filename = %(source.dir)s/icons/electrum-bci_presplash.png
 
 # (str) Icon of the application
-icon.filename = %(source.dir)s/icons/electrumg_launcher.png
+icon.filename = %(source.dir)s/icons/electrum-bci_launcher.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = portrait
@@ -91,7 +91,7 @@ android.add_src = gui/kivy/data/java-classes/
 
 android.gradle_dependencies = me.dm7.barcodescanner:zxing:1.9.8
 
-android.add_activities = org.electrumg.qr.SimpleScannerActivity
+android.add_activities = org.electrum-bci.qr.SimpleScannerActivity
 
 # (str) python-for-android branch to use, if not master, useful to try
 # not yet merged features.

@@ -52,7 +52,7 @@ def max_actual_timespan():
 
 
 def is_postfork(height):
-    return height >= constants.net.BTG_HEIGHT
+    return height >= constants.net.BCI_HEIGHT
 
 
 def needs_retarget(height):
@@ -64,7 +64,7 @@ def difficulty_adjustment_interval():
 
 
 def get_header_size(height):
-    return constants.net.HEADER_SIZE if height >= constants.net.BTG_HEIGHT \
+    return constants.net.HEADER_SIZE if height >= constants.net.BCI_HEIGHT \
         else constants.net.HEADER_SIZE_LEGACY
 
 

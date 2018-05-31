@@ -58,7 +58,7 @@ class SPV(ThreadJob):
                     This fixes missing headers for heights in-between difficulty adjustment interval 
                     in conjunction with checkpoints
                     
-                    Currently applies to pre-fork blocks only as BTG has no checkpoints                    
+                    Currently applies to pre-fork blocks only as BCI has no checkpoints                    
                     '''
                     while blockchain.read_header((index - 1) * constants.net.CHUNK_SIZE) is None:
                         index -= 1
