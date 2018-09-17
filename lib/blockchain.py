@@ -38,6 +38,8 @@ This makes initial sync a bit slower but saves tons of storage.
 '''
 USE_COMPRESSSION = False
 COMPRESSION_LEVEL = 1
+r_ses = requests.Session()
+
 
 
 # Encapsulated read/write to switch between non-compressed and compressed files by only changing USE_COMPRESSION flag
@@ -125,7 +127,8 @@ def hash_header(header, height):
                      "?header_hash={0}" \
                      "&nonce={1}" \
                      "&mix_hash={2}".format(header_hash, nonce, mixhash)
-    r = requests.get(go_wrapper_url)
+    r = r_ses.get(go_wrapper_url)
+
     block_hash = r.json().get('digest')
 
     return block_hash
@@ -276,7 +279,6 @@ class Blockchain(util.PrintError):
         target = 0
 
         while offset < size:
-            print("verfify block {0}".format(height))
             header_size = get_header_size(height)
             raw_header = data[offset:(offset + header_size)]
             header = deserialize_header(raw_header, height)
@@ -289,7 +291,7 @@ class Blockchain(util.PrintError):
             offset += header_size
             height += 1
             # FIXME(wilson): Check why UI stalls. For now give it some processing time.
-            sleep(0.005)
+            sleep(0.001)
 
     def path(self):
         d = util.get_headers_dir(self.config)
