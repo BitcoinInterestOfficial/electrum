@@ -22,9 +22,11 @@
 # SOFTWARE.
 import gzip
 import threading
-from time import sleep
+import struct
+import sha3
+import requests
 
-from .equihash import is_gbp_valid
+from time import sleep
 from . import util
 from . import constants
 from .bitcoin import *
@@ -36,6 +38,8 @@ This makes initial sync a bit slower but saves tons of storage.
 '''
 USE_COMPRESSSION = False
 COMPRESSION_LEVEL = 1
+r_ses = requests.Session()
+
 
 
 # Encapsulated read/write to switch between non-compressed and compressed files by only changing USE_COMPRESSION flag
@@ -98,12 +102,36 @@ def deserialize_header(header, height):
     return h
 
 
+def swap(line):
+    line_list = [line[i:i + 2] for i in range(0, len(line), 2)]
+    line_list.reverse()
+    return ''.join(line_list)
+
+
 def hash_header(header, height):
     if header is None:
         return '0' * 64
     if header.get('prev_block_hash') is None:
         header['prev_block_hash'] = '00'*32
-    return hash_encode(Hash(bfh(serialize_header(header, (not is_postfork(height))))))
+
+    header2 = bfh(serialize_header(header, (not is_postfork(height))))
+    s = sha3.keccak_256()
+
+    nonce = int(hash_encode(header2[132:140]), 16)
+    mixhash = hash_encode(header2[141:173])
+    header_hash_hex = header2[:108] + bytes(32)
+    s.update(header_hash_hex)
+    header_hash = swap(s.hexdigest())
+
+    go_wrapper_url = "https://progpow.bitcoininterest.io/" \
+                     "?header_hash={0}" \
+                     "&nonce={1}" \
+                     "&mix_hash={2}".format(header_hash, nonce, mixhash)
+    r = r_ses.get(go_wrapper_url)
+
+    block_hash = r.json().get('digest')
+
+    return block_hash
 
 
 def read_blockchains(config):
@@ -147,7 +175,7 @@ class Blockchain(util.PrintError):
     """
 
     def __init__(self, config, checkpoint, parent_id):
-        self.fork_byte_offset = constants.net.BCI_HEIGHT * constants.net.HEADER_SIZE_LEGACY
+        self.fork_byte_offset = constants.net.BCI_HEIGHT * constants.net.HEADER_SIZE
         self.config = config
         # interface catching up
         self.catch_up = None
@@ -212,44 +240,36 @@ class Blockchain(util.PrintError):
             if is_postfork(self.checkpoint):
                 self._size = size // constants.net.HEADER_SIZE
             else:
-                checkpoint_size = self.checkpoint * constants.net.HEADER_SIZE_LEGACY
+                checkpoint_size = self.checkpoint * constants.net.HEADER_SIZE
                 full_size = (size + checkpoint_size)
 
                 # Check fork boundary crossing
                 if full_size <= self.fork_byte_offset:
-                    self._size = size // constants.net.HEADER_SIZE_LEGACY
+                    self._size = size // constants.net.HEADER_SIZE
                 else:
-                    prb = (self.fork_byte_offset - checkpoint_size) // constants.net.HEADER_SIZE_LEGACY
+                    prb = (self.fork_byte_offset - checkpoint_size) // constants.net.HEADER_SIZE
                     pob = (full_size - self.fork_byte_offset) // constants.net.HEADER_SIZE
                     self._size = prb + pob
         else:
             self._size = 0
 
     def verify_header(self, header, prev_hash, target):
+        # @ToDo Progpow mixhash validation at some point
         block_height = header.get('block_height')
-
         if prev_hash != header.get('prev_block_hash'):
             raise BaseException("prev hash mismatch: %s vs %s" % (prev_hash, header.get('prev_block_hash')))
-        #if constants.net.TESTNET:
-        #    return
+
+        if constants.net.TESTNET:
+            return
         bits = self.target_to_bits(target)
         if bits != header.get('bits'):
             raise BaseException("bits mismatch: %s vs %s" % (bits, header.get('bits')))
         _hash = hash_header(header, block_height)
         if int('0x' + _hash, 16) > target:
             raise BaseException("insufficient proof of work: %s vs target %s" % (int('0x' + _hash, 16), target))
-        #_powhash = uint256_from_bytes(Hash(bfh(serialize_header(header))))
-        #if _powhash > target:
-        #    raise BaseException("insufficient proof of work: %s vs target %s" % (int('0x' + _powhash, 16), target))
-        if is_postfork(block_height):
-            header_bytes = bytes.fromhex(serialize_header(header))
-            nonce = uint256_from_bytes(bfh(header.get('nonce'))[::-1])
-            solution = bfh(header.get('solution'))[::-1]
-            offset, length = var_int_read(solution, 0)
-            solution = solution[offset:]
-
-            if not is_gbp_valid(header_bytes, nonce, solution, constants.net.EQUIHASH_N, constants.net.EQUIHASH_K):
-                raise BaseException("Invalid equihash solution")
+        _powhash = uint256_from_bytes(bytes.fromhex(swap(hash_header(header, block_height))))
+        if _powhash > target:
+            raise BaseException("insufficient proof of work: %s vs target %s" % (int('0x' + _powhash, 16), target))
 
     def verify_chunk(self, height, data):
         size = len(data)
@@ -263,11 +283,9 @@ class Blockchain(util.PrintError):
             raw_header = data[offset:(offset + header_size)]
             header = deserialize_header(raw_header, height)
             headers[height] = header
-
             # Check retarget
             if needs_retarget(height) or target == 0:
                 target = self.get_target(height, headers)
-
             self.verify_header(header, prev_hash, target)
             prev_hash = hash_header(header, height)
             offset += header_size
@@ -319,7 +337,7 @@ class Blockchain(util.PrintError):
         if not is_postfork(parent.checkpoint) and is_postfork(checkpoint):
             prb = (constants.net.BCI_HEIGHT - parent.checkpoint)
             pob = checkpoint - constants.net.BCI_HEIGHT
-            offset = (prb * constants.net.HEADER_SIZE_LEGACY) + (pob * constants.net.HEADER_SIZE)
+            offset = (prb * constants.net.HEADER_SIZE) + (pob * constants.net.HEADER_SIZE)
             size = parent_branch_size * constants.net.HEADER_SIZE
         else:
             offset = delta * get_header_size(parent.checkpoint)
@@ -382,7 +400,6 @@ class Blockchain(util.PrintError):
         offset, header_size = self.get_offset(height)
         data = bfh(ser_header)
         length = len(data)
-
         assert delta == self.get_branch_size()
         assert length == header_size
         self.write(data, offset)
@@ -439,7 +456,6 @@ class Blockchain(util.PrintError):
     def get_target(self, height, headers=None):
         if headers is None:
             headers = {}
-
         # Check for genesis
         if height == 0:
             new_target = constants.net.POW_LIMIT_LEGACY
@@ -447,9 +463,6 @@ class Blockchain(util.PrintError):
         elif height % difficulty_adjustment_interval() == 0 and 0 <= ((height // difficulty_adjustment_interval()) - 1) < len(self.checkpoints):
             h, t = self.checkpoints[((height // difficulty_adjustment_interval()) - 1)]
             new_target = t
-        # Check for prefork
-        elif height < constants.net.BCI_HEIGHT:
-            new_target = self.get_legacy_target(height, headers)
         # Premine
         elif height < constants.net.BCI_HEIGHT + constants.net.PREMINE_SIZE:
             new_target = constants.net.POW_LIMIT
@@ -566,9 +579,7 @@ class Blockchain(util.PrintError):
                 first = self.get_header(prev_height, headers)
                 i += 1
 
-            # This should never happen else we have a serious problem
             assert first is not None
-
             avg = total // constants.net.DIGI_AVERAGING_WINDOW
             actual_timespan = self.get_mediantime_past(headers, last.get('block_height')) \
                 - self.get_mediantime_past(headers, first.get('block_height'))
@@ -655,8 +666,7 @@ class Blockchain(util.PrintError):
     def connect_chunk(self, idx, hexdata):
         try:
             data = bfh(hexdata)
-            if(idx != 2036): # ToDo fix check for chunk 2036
-                self.verify_chunk(idx * constants.net.CHUNK_SIZE, data)
+            self.verify_chunk(idx * constants.net.CHUNK_SIZE, data)
             self.print_error("validated chunk %d" % idx)
             self.save_chunk(idx * constants.net.CHUNK_SIZE, data)
             return True
@@ -669,7 +679,7 @@ class Blockchain(util.PrintError):
         header_size = get_header_size(height)
 
         if is_postfork(height) and not is_postfork(self.checkpoint):
-            pr = (constants.net.BCI_HEIGHT - self.checkpoint) * constants.net.HEADER_SIZE_LEGACY
+            pr = (constants.net.BCI_HEIGHT - self.checkpoint) * constants.net.HEADER_SIZE
             po = (height - constants.net.BCI_HEIGHT) * constants.net.HEADER_SIZE
             offset = pr + po
         else:

@@ -64,9 +64,7 @@ def difficulty_adjustment_interval():
 
 
 def get_header_size(height):
-    return constants.net.HEADER_SIZE if height >= constants.net.BCI_HEIGHT \
-        else constants.net.HEADER_SIZE_LEGACY
-
+    return constants.net.HEADER_SIZE
 
 def hex_to_int(s):
     return int('0x' + bh2u(s[::-1]), 16)
@@ -81,7 +79,7 @@ FEE_STEP = 10000
 MAX_FEE_RATE = 300000
 
 
-COINBASE_MATURITY = 100
+COINBASE_MATURITY = 30
 COIN = 100000000
 
 # supported types of transaction outputs
