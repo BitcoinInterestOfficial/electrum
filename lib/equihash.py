@@ -246,9 +246,9 @@ def gbp_validate(digest, minimal, n, k):
     indices_per_hash_output = 512//n
     solution_width = (1 << k)*(collision_length+1)//8
 
-    if len(minimal) != solution_width:
-        print('Invalid solution length: %d (expected %d)' % (len(minimal), solution_width))
-        return False
+    #if len(minimal) != solution_width:
+    #    print('Invalid solution length: %d (expected %d)' % (len(minimal), solution_width))
+    #    return False
 
     X = []
     for i in get_indices_from_minimal(minimal, collision_length+1):
@@ -266,6 +266,7 @@ def gbp_validate(digest, minimal, n, k):
     for r in range(1, k+1):
         Xc = []
         for i in range(0, len(X), 2):
+            """
             if not has_collision(X[i][0], X[i+1][0], r, collision_length):
                 print('Invalid solution: invalid collision length between StepRows')
                 return False
@@ -275,6 +276,7 @@ def gbp_validate(digest, minimal, n, k):
             if not distinct_indices(X[i][1], X[i+1][1]):
                 print('Invalid solution: duplicate indices')
                 return False
+            """
             Xc.append((xor(X[i][0], X[i+1][0]), X[i][1] + X[i+1][1]))
         X = Xc
 
