@@ -1026,7 +1026,6 @@ class Network(util.DaemonThread):
 
         return True, None
 
-
     def init_headers_file_old(self):
         b = self.blockchains[0]
         filename = b.path()
@@ -1083,7 +1082,7 @@ class Network(util.DaemonThread):
             self.notify('interfaces')
             return
         tip = max([x.height() for x in self.blockchains.values()])
-        if tip >=0:
+        if tip >= 0:
             interface.mode = 'backward'
             interface.bad = height
             interface.bad_header = header

@@ -812,16 +812,10 @@ def export_meta(meta, fileName):
 
 
 def download_bootstrap(url, dest_file):
-    import tempfile
+    import shutil
     # Download
     headers = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0"}
     req = urllib.request.Request(url, headers=headers)
 
-    with urllib.request.urlopen(req) as response, tempfile.NamedTemporaryFile() as src_file:
-        import shutil
-        shutil.copyfileobj(response, src_file)
-
-        # Decompress
-        import gzip
-        with gzip.GzipFile(src_file.name, 'rb') as in_file, open(dest_file, 'wb+') as out_file:
-            out_file.write(in_file.read())
+    with urllib.request.urlopen(req) as response, open(dest_file, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)

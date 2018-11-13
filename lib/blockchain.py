@@ -41,7 +41,6 @@ COMPRESSION_LEVEL = 1
 r_ses = requests.Session()
 
 
-
 # Encapsulated read/write to switch between non-compressed and compressed files by only changing USE_COMPRESSION flag
 def read_file(filename, callback, lock):
     if callable(callback):
@@ -140,7 +139,7 @@ def read_blockchains(config):
     if not os.path.exists(fdir):
         os.mkdir(fdir)
     l = filter(lambda x: x.startswith('fork_'), os.listdir(fdir))
-    l = sorted(l, key = lambda x: int(x.split('_')[1]))
+    l = sorted(l, key=lambda x: int(x.split('_')[1]))
     for filename in l:
         checkpoint = int(filename.split('_')[2])
         parent_id = int(filename.split('_')[1])
