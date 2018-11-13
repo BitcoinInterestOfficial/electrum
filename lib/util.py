@@ -809,3 +809,19 @@ def export_meta(meta, fileName):
     except (IOError, os.error) as e:
         traceback.print_exc(file=sys.stderr)
         raise FileExportFailed(e)
+
+
+def download_bootstrap(url, dest_file):
+    import tempfile
+    # Download
+    headers = {'User-Agent': "Mozilla/5.0 (X11; Linux x86_64; rv:47.0) Gecko/20100101 Firefox/47.0"}
+    req = urllib.request.Request(url, headers=headers)
+
+    with urllib.request.urlopen(req) as response, tempfile.NamedTemporaryFile() as src_file:
+        import shutil
+        shutil.copyfileobj(response, src_file)
+
+        # Decompress
+        import gzip
+        with gzip.GzipFile(src_file.name, 'rb') as in_file, open(dest_file, 'wb+') as out_file:
+            out_file.write(in_file.read())

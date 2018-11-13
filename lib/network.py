@@ -969,6 +969,65 @@ class Network(util.DaemonThread):
     def init_headers_file(self):
         b = self.blockchains[0]
         filename = b.path()
+
+        if not os.path.exists(filename):
+            ret, msg = self.do_bootstrap(filename)
+
+            if not ret:
+                b.update_size()
+
+                self.print_error('Error doing online bootstrap: ' + msg)
+                self.print_msg('Fallback to checkpoint bootstrap (if any)')
+
+                length = len(constants.net.CHECKPOINTS) * difficulty_adjustment_interval()
+                if length > 0:
+
+                    offset = b.get_offset(0, length)
+
+                    def fill_header(f):
+                        if length > 0:
+                            f.seek(offset-1)
+                            f.write(b'\x00')
+
+                    blockchain.write_file(filename, fill_header, b.lock, 'wb+')
+                    self.print_msg('Checkpoints written.')
+                else:
+                    self.print_error('No checkpoints available!')
+                    self.print_msg('Fallback to sync from genesis')
+
+                    blockchain.write_file(filename, lambda f: f.seek(0), b.lock, 'wb+')
+
+            b.update_size()
+
+    def do_bootstrap(self, dest_file):
+        if not os.path.exists(dest_file):
+            # Check for existing url
+            if constants.net.HEADERS_URL is None:
+                return False, 'No headers url for ' + str(constants.net.__name__)
+            else:
+                try:
+                    self.print_msg('Doing online bootstrap ...')
+
+                    # Download bootstrap file
+                    util.download_bootstrap(constants.net.HEADERS_URL, dest_file)
+
+                    self.print_msg('Bootstrap done.')
+                except Exception as e:
+                    # Cleanup
+                    if os.path.exists(dest_file):
+                        try:
+                            os.remove(dest_file)
+                        except:
+                            pass
+
+                    return False, str(e)
+
+        return True, None
+
+
+    def init_headers_file_old(self):
+        b = self.blockchains[0]
+        filename = b.path()
         b.update_size()
 
         length = len(constants.net.CHECKPOINTS) * difficulty_adjustment_interval()

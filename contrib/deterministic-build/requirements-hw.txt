@@ -17,3 +17,4 @@ rlp==0.6.0
 six==1.11.0
 trezor==0.9.1
 urllib3==1.22
+pysha3==1.0.2

@@ -1,3 +1,14 @@
+# Release 3.4
+
+ * Added / Fixed initial blockchain headers
+ * Fixed price getter
+
+
+# Release 3.3
+
+ ProgPow changes
+
+
 # Release 3.2
 
  First release containing changes for BitcoinInterest

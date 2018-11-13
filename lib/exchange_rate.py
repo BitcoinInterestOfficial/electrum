@@ -117,7 +117,7 @@ class ExchangeBase(PrintError):
 
 class Bitfinex(ExchangeBase):
     def get_rates(self, ccy):
-        json = self.get_json('api.bitfinex.com', "/v1/ticker/btg%s" % ccy)
+        json = self.get_json('api.bitfinex.com', "/v1/ticker/bci%s" % ccy)
         return {ccy: Decimal(json['last_price'])}
 
 

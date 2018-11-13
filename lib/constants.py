@@ -73,7 +73,7 @@ class BitcoinInterestMainnet(BitcoinInterestBase):
     ADDRTYPE_P2SH = 23
     SEGWIT_HRP = "bci"
 
-    HEADERS_URL = ""
+    HEADERS_URL = "https://wallet.bitcoininterest.io/electrum/blockchain_headers.gz"
     GENESIS = "00000d74c4f0d40f1bc6c269081440297f72939b13faaec052023e3899f59078"
 
     DEFAULT_SERVERS = read_json('servers.json', {})
