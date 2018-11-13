@@ -1011,6 +1011,8 @@ class Network(util.DaemonThread):
                     # Download bootstrap file
                     util.download_bootstrap(constants.net.HEADERS_URL, dest_file)
 
+                    self.print_msg('Saved {0} to {1}'.format(constants.net.HEADERS_URL, dest_file))
+
                     self.print_msg('Bootstrap done.')
                 except Exception as e:
                     # Cleanup
